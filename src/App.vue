@@ -1,18 +1,17 @@
 <template>
   <div class="shop">
-    <shop-shopping-cart-popup
+    <shop-cart-popup
       v-if="isPopupVisible"
-
+      :current-list-cart="currentListCart"
       :class="{'shop-popup-cart_active':isPopupVisible}"
-      @changeStateVisible="changeStateVisible"
+      @change-state-visible="changeStateVisible"
     />
     <div class="shop-header">
-      <div
+      <shop-cart
         class="shop-header__shopping-cart"
+        :current-list-cart="currentListCart"
         @click="changeStateVisible"
-      >
-        Hello
-      </div>
+      />
     </div>
     <main>
       <shop-card
@@ -20,6 +19,7 @@
         :key="product.id"
         :product="product"
         class="chop-card"
+        @add-product-in-cart="addProductInCart"
       />
     </main>
   </div>
@@ -27,18 +27,34 @@
 
 <script setup>
 
-  import {ref, onMounted} from 'vue';
+  import {ref, onMounted, computed} from 'vue';
   import ShopCard from './components/ShopCard.vue';
-  import ShopShopingCart from './components/ShopShopingCart.vue';
-  import ShopShoppingCartPopup from './components/ShopShoppingCartPopup.vue';
+  import ShopCartPopup from './components/ShopCartPopup.vue';
+  import ShopCart from './components/ShopCart.vue';
 
   const products = ref([]);
-  const isPopupVisible = ref(true);
+  const isPopupVisible = ref(false);
+  const listCart = ref([]);
+  const currentListCart = computed(() => {
+    const aaa = listCart.value.reduce((acc, product) => {
+      if (acc[product.title]) {
+        acc[product.title].quantity += 1;
+        acc[product.title].priceProducts += product.price;
+      } else {
+        acc[product.title] = {
+          price: product.price,
+          quantity: 1,
+          img: product.thumbnail,
+          priceProducts: product.price,
+        };
+      }
+      return acc;
+    }, {});
+    console.log(aaa);
+    return aaa;
+  });
+
   const getProducts = async () => (await fetch('https://dummyjson.com/products')).json();
-  // const productsReady = computed(() => {
-  //   if ()
-  //   products.value);
-  // };
 
   onMounted(async () => {
     const aaa = (await getProducts()).products;
@@ -47,6 +63,12 @@
   });
   const changeStateVisible = () => {
     isPopupVisible.value = !isPopupVisible.value;
+  };
+  const addProductInCart = (id) => {
+    console.log('add ', id);
+    const indexProduct = products.value.findIndex((product) => product.id === id);
+    listCart.value.push(products.value[indexProduct]);
+    console.log(listCart.value);
   };
 </script>
 
@@ -63,12 +85,7 @@
       &__shopping-cart {
         grid-column: 2/-1;
         justify-self: center;
-        border: 2px coral solid;
-        border-radius: 7px;
-        width: 100px;
-        height: 40px;
-        text-align: center;
-        padding-top: 20px;
+        cursor: pointer;
       }
     }
 

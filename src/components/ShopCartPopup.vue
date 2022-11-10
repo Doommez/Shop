@@ -18,18 +18,34 @@
 </template>
 
 <script setup>
+  import {toRef} from 'vue';
   import BaseButtonClose from './BaseButtonClose.vue';
 
   const emit = defineEmits([
     'changeStateVisible',
   ]);
 
-  const ClosePopup = () => emit('changeStateVisible');
+  const props = defineProps({
+    currentListCart: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+  });
+
+  const listCart = toRef(props, 'currentListCart');
+
+  const ClosePopup = () => {
+    document.body.style = '';
+    emit('changeStateVisible');
+  };
 
 </script>
 
 <style lang="scss" scoped>
   .shop-popup-cart {
+    cursor: pointer;
     &_active {
       min-width: 100vw;
       height: 100vh;
@@ -39,6 +55,7 @@
     }
 
     &__body {
+      cursor: auto;
       border-radius: 8px;
       background-color: aliceblue;
       padding: 20px;

@@ -7,12 +7,18 @@
     <div>{{ title }}</div>
     <div>{{ description }}</div>
     <div>{{ price }}$</div>
-    <button>click</button>
+    <button @click="upIdProduct(id)">
+      buy
+    </button>
   </div>
 </template>
 <script setup>
 
   import {toRefs} from 'vue';
+
+  const emit = defineEmits([
+    'addProductInCart',
+  ]);
 
   const props = defineProps({
     product: {
@@ -24,6 +30,10 @@
     title, description, id, thumbnail, price,
   } = toRefs(props.product);
 
+  const upIdProduct = (id) => {
+    console.log(id);
+    emit('addProductInCart', id);
+  };
 </script>
 
 <style lang="scss" scoped>
