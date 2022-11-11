@@ -16,12 +16,13 @@
   const listCard = toRef(props, 'currentListCart');
 
   const quantityProducts = computed(() => new Set(listCard.value).size);
+
 </script>
 
 <style lang="scss" scoped>
   button {
     font-size: 20px;
-    padding-top: 0px;
+    padding-top: 0;
     border: 2px coral solid;
     border-radius: 7px;
     width: 100px;

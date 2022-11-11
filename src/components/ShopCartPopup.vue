@@ -9,27 +9,27 @@
         @click="ClosePopup"
       />
       <div
-        v-for="card in currentProducts"
-        :key="card.id"
+        v-for="product in currentProducts"
+        :key="product.id"
         class="shop-popup-cart__description"
       >
         <img
-          :src="card.thumbnail"
-          :alt="card.title"
+          :src="product.thumbnail"
+          :alt="product.title"
         >
         <div>
           <div class="shop-popup-cart__description_bold">
-            {{ card.title }}
+            {{ product.title }}
           </div>
-          <div>quantity: {{ card.quantity }}</div>
-          <div>price: {{ card.price }}$</div>
-          <div>price for all: {{ card.priceProducts }}$</div>
+          <div>quantity: {{ product.quantity }}</div>
+          <div>price: {{ product.price }}$</div>
+          <div>price for all: {{ product.priceProducts }}$</div>
         </div>
         <div class="shop-popup-cart__description_action">
-          <button @click="addProduct(card.id)">
+          <button @click="addProduct(product.id)">
             +
           </button>
-          <button @click="deleteProduct(card.id)">
+          <button @click="deleteProduct(product.id)">
             -
           </button>
         </div>
@@ -51,73 +51,36 @@
 
   const props = defineProps({
     currentListCart: {
-      type: Object,
+      type: Array,
       required: true,
     },
   });
 
   const listCart = toRef(props, 'currentListCart');
 
-  const totalPrice = computed(() => listCart.value.reduce((acc, product) => acc += product.priceProducts, 0));
+  const totalPrice = computed(() => listCart.value.reduce((total, product) => total += product.priceProducts, 0));
 
-  const currentProducts = computed(() => {
-    const aaa = listCart.value.reduce((acc, product) => {
-      console.log(acc.indexOf(product));
-      if (acc.indexOf(product) !== -1) {
-        product.quantity += 1;
-        product.priceProducts += product.price;
-        acc[acc.indexOf(product)] = product;
-      } else {
-        product.quantity = 1;
-        product.priceProducts = product.price;
-        acc.push(product);
-      }
-      return acc;
-    }, []);
-    console.log(aaa);
-    return aaa;
-  });
+  const currentProducts = computed(() => listCart.value.reduce((listProduct, product) => {
+    if (listProduct.indexOf(product) !== -1) {
+      product.quantity += 1;
+      product.priceProducts += product.price;
+      listProduct[listProduct.indexOf(product)] = product;
+    } else {
+      product.quantity = 1;
+      product.priceProducts = product.price;
+      listProduct.push(product);
+    }
+    return listProduct;
+  }, []));
 
   const addProduct = (id) => {
     const indexProduct = listCart.value.findIndex((product) => product.id === id);
-    console.log(indexProduct, listCart.value);
     if (indexProduct !== -1) {
       listCart.value.push(listCart.value[indexProduct]);
-      // listCart.value[indexProduct].priceProducts += listCart.value[indexProduct].price;
-      // listCart.value[indexProduct].quantity += 1;
     }
   };
-  // const arrCardKey = Object.keys(listCart.value);
-  // arrCardKey.forEach((key) => {
-  //   if (listCart.value[`${key}`].id === id) {
-  //     console.log(listCart.value[`${key}`]);
-  //     console.log(listCart.value);
-  // listCart.value = {
-  //   ...listCart.value,
-  //   [`${key}`]: {
-  //     title: listCart.value[`${key}`].title,
-  //     price: listCart.value[`${key}`].price,
-  //     img: listCart.value[`${key}`].thumbnail,
-  //     id: listCart.value[`${key}`].id,
-  //     quantity: listCart.value[`${key}`].quantity + 1,
-  //     priceProducts: listCart.value[`${key}`].priceProducts + listCart.value[`${key}`].price,
-  //   },
-  //
-  // };
-  // }
-  // });
 
-  //
-  //   console.log(arrCardKey);
-  //   // for (const key in listCart.value) {
-  //   //   if (listCart.value[`${key}`].id === id) {
-  //   //     listCart.value[`${key}`].quantity += 1;
-  //   //     listCart.value[`${key}`].priceProducts += listCart.value[`${key}`].price;
-  //   //   }
-  //   // }
-  // };
   const deleteProduct = (id) => {
-    console.log(id);
     const indexProduct = listCart.value.findIndex((product) => product.id === id);
     if (indexProduct !== -1) {
       listCart.value.splice(indexProduct, 1);
