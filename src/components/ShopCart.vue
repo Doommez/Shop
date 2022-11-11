@@ -1,25 +1,21 @@
 <template>
   <button>
-    cart <sup>{{ qualityProducts }}</sup>
+    cart <sup>{{ quantityProducts }}</sup>
   </button>
 </template>
 <script setup>
-  import {computed, toRef} from 'vue';
+  import {toRef, computed} from 'vue';
 
   const props = defineProps({
     currentListCart: {
-      type: Object,
+      type: Array,
       required: true,
     },
   });
-  const aaa = toRef(props, 'currentListCart');
-  const qualityProducts = computed(() => {
-    let counter = 0;
-    for (const key in aaa.value) {
-      counter += 1;
-    }
-    return counter;
-  });
+
+  const listCard = toRef(props, 'currentListCart');
+
+  const quantityProducts = computed(() => new Set(listCard.value).size);
 </script>
 
 <style lang="scss" scoped>

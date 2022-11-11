@@ -2,14 +2,14 @@
   <div class="shop">
     <shop-cart-popup
       v-if="isPopupVisible"
-      :current-list-cart="currentListCart"
+      :current-list-cart="listCart"
       :class="{'shop-popup-cart_active':isPopupVisible}"
       @change-state-visible="changeStateVisible"
     />
     <div class="shop-header">
       <shop-cart
         class="shop-header__shopping-cart"
-        :current-list-cart="currentListCart"
+        :current-list-cart="listCart"
         @click="changeStateVisible"
       />
     </div>
@@ -27,7 +27,9 @@
 
 <script setup>
 
-  import {ref, onMounted, computed} from 'vue';
+  import {
+    ref, onMounted, watch,
+  } from 'vue';
   import ShopCard from './components/ShopCard.vue';
   import ShopCartPopup from './components/ShopCartPopup.vue';
   import ShopCart from './components/ShopCart.vue';
@@ -35,40 +37,26 @@
   const products = ref([]);
   const isPopupVisible = ref(false);
   const listCart = ref([]);
-  const currentListCart = computed(() => {
-    const aaa = listCart.value.reduce((acc, product) => {
-      if (acc[product.title]) {
-        acc[product.title].quantity += 1;
-        acc[product.title].priceProducts += product.price;
-      } else {
-        acc[product.title] = {
-          price: product.price,
-          quantity: 1,
-          img: product.thumbnail,
-          priceProducts: product.price,
-        };
-      }
-      return acc;
-    }, {});
-    console.log(aaa);
-    return aaa;
-  });
 
   const getProducts = async () => (await fetch('https://dummyjson.com/products')).json();
 
   onMounted(async () => {
-    const aaa = (await getProducts()).products;
-    console.log(aaa);
-    products.value = aaa;
+    products.value = (await getProducts()).products;
   });
+
   const changeStateVisible = () => {
     isPopupVisible.value = !isPopupVisible.value;
   };
+
+  watch(isPopupVisible, (newValue) => {
+    if (newValue) {
+      document.body.style = 'overflow: hidden';
+    }
+  });
+
   const addProductInCart = (id) => {
-    console.log('add ', id);
     const indexProduct = products.value.findIndex((product) => product.id === id);
     listCart.value.push(products.value[indexProduct]);
-    console.log(listCart.value);
   };
 </script>
 
@@ -94,7 +82,6 @@
       grid-template-columns: 15% 15% 15% 15% 15%;
       justify-content: center;
       grid-gap: 20px;
-      align-items: center;
     }
   }
 </style>

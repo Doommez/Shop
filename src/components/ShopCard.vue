@@ -26,14 +26,15 @@
       required: true,
     },
   });
+
   const {
     title, description, id, thumbnail, price,
   } = toRefs(props.product);
 
   const upIdProduct = (id) => {
-    console.log(id);
     emit('addProductInCart', id);
   };
+
 </script>
 
 <style lang="scss" scoped>
@@ -41,28 +42,31 @@
     display: grid;
     grid-template-rows: 1fr 30px 100px 40px 30px;
     justify-items: center;
-    grid-row-gap: 10px;
     border: 1px solid mediumpurple;
     border-radius: 10px;
     padding: 0 0 20px 0;
-    div{
+
+    div {
       padding: 20px 10px;
     }
+
     img {
       padding: 20px 10px;
       max-width: 200px;
       height: 150px;
     }
-    button{
+
+    button {
       border-radius: 5px;
-      border:1px solid mediumpurple;
+      border: 1px solid mediumpurple;
       box-shadow: 1px 1px 1px mediumpurple;
       background: #ffff;
       cursor: pointer;
       width: 50%;
       transition: ease-in .1s;
     }
-    button:hover{
+
+    button:hover {
       transform: scale(1.2);
     }
   }

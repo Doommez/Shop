@@ -5,20 +5,44 @@
   >
     <div class="shop-popup-cart__body">
       <base-button-close
-        class="shop-popup-cart__body__button"
+        class="shop-popup-cart__button-close"
         @click="ClosePopup"
       />
-      <div>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur culpa cum cumque fugit minima nam,
-        necessitatibus, nostrum porro possimus quaerat quibusdam repudiandae, vero vitae. Amet doloribus facere facilis
-        perspiciatis voluptate.
+      <div
+        v-for="card in currentProducts"
+        :key="card.id"
+        class="shop-popup-cart__description"
+      >
+        <img
+          :src="card.thumbnail"
+          :alt="card.title"
+        >
+        <div>
+          <div class="shop-popup-cart__description_bold">
+            {{ card.title }}
+          </div>
+          <div>quantity: {{ card.quantity }}</div>
+          <div>price: {{ card.price }}$</div>
+          <div>price for all: {{ card.priceProducts }}$</div>
+        </div>
+        <div class="shop-popup-cart__description_action">
+          <button @click="addProduct(card.id)">
+            +
+          </button>
+          <button @click="deleteProduct(card.id)">
+            -
+          </button>
+        </div>
+      </div>
+      <div class="shop-popup-cart__total">
+        total price: {{ totalPrice }}
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-  import {toRef} from 'vue';
+  import {toRef, computed} from 'vue';
   import BaseButtonClose from './BaseButtonClose.vue';
 
   const emit = defineEmits([
@@ -28,13 +52,77 @@
   const props = defineProps({
     currentListCart: {
       type: Object,
-      default() {
-        return {};
-      },
+      required: true,
     },
   });
 
   const listCart = toRef(props, 'currentListCart');
+
+  const totalPrice = computed(() => listCart.value.reduce((acc, product) => acc += product.priceProducts, 0));
+
+  const currentProducts = computed(() => {
+    const aaa = listCart.value.reduce((acc, product) => {
+      console.log(acc.indexOf(product));
+      if (acc.indexOf(product) !== -1) {
+        product.quantity += 1;
+        product.priceProducts += product.price;
+        acc[acc.indexOf(product)] = product;
+      } else {
+        product.quantity = 1;
+        product.priceProducts = product.price;
+        acc.push(product);
+      }
+      return acc;
+    }, []);
+    console.log(aaa);
+    return aaa;
+  });
+
+  const addProduct = (id) => {
+    const indexProduct = listCart.value.findIndex((product) => product.id === id);
+    console.log(indexProduct, listCart.value);
+    if (indexProduct !== -1) {
+      listCart.value.push(listCart.value[indexProduct]);
+      // listCart.value[indexProduct].priceProducts += listCart.value[indexProduct].price;
+      // listCart.value[indexProduct].quantity += 1;
+    }
+  };
+  // const arrCardKey = Object.keys(listCart.value);
+  // arrCardKey.forEach((key) => {
+  //   if (listCart.value[`${key}`].id === id) {
+  //     console.log(listCart.value[`${key}`]);
+  //     console.log(listCart.value);
+  // listCart.value = {
+  //   ...listCart.value,
+  //   [`${key}`]: {
+  //     title: listCart.value[`${key}`].title,
+  //     price: listCart.value[`${key}`].price,
+  //     img: listCart.value[`${key}`].thumbnail,
+  //     id: listCart.value[`${key}`].id,
+  //     quantity: listCart.value[`${key}`].quantity + 1,
+  //     priceProducts: listCart.value[`${key}`].priceProducts + listCart.value[`${key}`].price,
+  //   },
+  //
+  // };
+  // }
+  // });
+
+  //
+  //   console.log(arrCardKey);
+  //   // for (const key in listCart.value) {
+  //   //   if (listCart.value[`${key}`].id === id) {
+  //   //     listCart.value[`${key}`].quantity += 1;
+  //   //     listCart.value[`${key}`].priceProducts += listCart.value[`${key}`].price;
+  //   //   }
+  //   // }
+  // };
+  const deleteProduct = (id) => {
+    console.log(id);
+    const indexProduct = listCart.value.findIndex((product) => product.id === id);
+    if (indexProduct !== -1) {
+      listCart.value.splice(indexProduct, 1);
+    }
+  };
 
   const ClosePopup = () => {
     document.body.style = '';
@@ -46,12 +134,19 @@
 <style lang="scss" scoped>
   .shop-popup-cart {
     cursor: pointer;
+
     &_active {
       min-width: 100vw;
       height: 100vh;
-      background: rgb(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.8);
       position: fixed;
-      overflow-y: hidden;
+      overflow: hidden;
+    }
+
+    &__button-close {
+      width: 10px;
+      height: 10px;
+      justify-self: end;
     }
 
     &__body {
@@ -59,19 +154,55 @@
       border-radius: 8px;
       background-color: aliceblue;
       padding: 20px;
-      top: 40%;
-      left: 40%;
-      position: fixed;
-      max-width: 20%;
+      top: 20vh;
+      left: calc(50% - 20%);
+      position: absolute;
+      width: 40%;
+      height: 50%;
       display: grid;
-      grid-template-rows: 20px 1fr;
-      justify-items: end;
-      z-index: 10;
+      grid-template-rows: 20px repeat(auto-fill, 90px);
+      gap: 10px;
+      overflow: scroll;
 
-      &__button {
-        width: 10px;
-        height: 10px;
-        grid-row: 1/2;
+      &::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+      }
+
+      img {
+        max-width: 85px;
+        max-height: 85px;
+        box-shadow: -1px 3px 28px 5px rgba(34, 60, 80, 0.22);
+      }
+
+    }
+    &__total {
+      font-size: 20px;
+      font-weight: bold;
+      justify-self: center;
+    }
+    &__description {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      justify-items: center;
+
+      &_bold {
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      &_action {
+        display: grid;
+        grid-template-rows: 50% 50%;
+
+        button {
+          width: 80px;
+          height: 30px;
+          background-color: aliceblue;
+          border: 1px solid mediumpurple;
+          border-radius: 5px;
+          cursor: pointer;
+        }
       }
     }
   }
