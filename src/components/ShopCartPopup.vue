@@ -1,13 +1,16 @@
 <template>
   <div
     class="shop-popup-cart"
-    @click.self="ClosePopup"
+    :value="show"
+    @click.self="$emit('update:show', !show)"
   >
     <div class="shop-popup-cart__body">
-      <base-button-close
-        class="shop-popup-cart__button-close"
-        @click="ClosePopup"
-      />
+      <button
+        :value="show"
+        @click="$emit('update:show', !show)"
+      >
+        close
+      </button>
       <div
         v-for="product in currentProducts"
         :key="product.id"
@@ -43,15 +46,19 @@
 
 <script setup>
   import {toRef, computed} from 'vue';
-  import BaseButtonClose from './BaseButtonClose.vue';
+
 
   const emit = defineEmits([
-    'changeStateVisible',
+    'update:show',
   ]);
 
   const props = defineProps({
     currentListCart: {
       type: Array,
+      required: true,
+    },
+    show: {
+      type: Boolean,
       required: true,
     },
   });
@@ -88,7 +95,6 @@
   };
 
   const ClosePopup = () => {
-    document.body.style = '';
     emit('changeStateVisible');
   };
 
