@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="product">
     <img
       :src="thumbnail"
       :alt="title"
@@ -7,7 +7,7 @@
     <div>{{ title }}</div>
     <div>{{ description }}</div>
     <div>{{ price }}$</div>
-    <button @click="upIdProduct(id)">
+    <button @click="buyProduct(id)">
       buy
     </button>
   </div>
@@ -17,7 +17,7 @@
   import {toRefs} from 'vue';
 
   const emit = defineEmits([
-    'addProductInCart',
+    'addPositionToCart',
   ]);
 
   const props = defineProps({
@@ -31,29 +31,25 @@
     title, description, id, thumbnail, price,
   } = toRefs(props.product);
 
-  const upIdProduct = (id) => {
-    emit('addProductInCart', id);
+  const buyProduct = (id) => {
+    emit('addPositionToCart', id);
   };
 
 </script>
 
 <style lang="scss" scoped>
-  .chop-card {
+  .product {
     display: grid;
-    grid-template-rows: 1fr 30px 100px 40px 30px;
+    grid-template-rows: 200px 30px 1fr 30px 30px;
     justify-items: center;
-    border: 1px solid mediumpurple;
+    border: 2px solid mediumpurple;
     border-radius: 10px;
-    padding: 0 0 20px 0;
-
-    div {
-      padding: 20px 10px;
-    }
+    gap: 10px;
+    padding: 10px;
 
     img {
-      padding: 20px 10px;
-      max-width: 200px;
-      height: 150px;
+      max-width: 310px;
+      height: 200px;
     }
 
     button {
@@ -64,10 +60,10 @@
       cursor: pointer;
       width: 50%;
       transition: ease-in .1s;
-    }
 
-    button:hover {
-      transform: scale(1.2);
+      &:hover {
+        transform: scale(1.1);
+      }
     }
   }
 

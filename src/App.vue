@@ -1,76 +1,62 @@
 <template>
   <div class="shop">
-    <!--    <shop-cart-popup-->
-    <!--      v-if="show"-->
-    <!--      v-model:show="show"-->
-    <!--      :current-list-cart="listCart"-->
-    <!--      :class="{'shop-popup-cart_active':show}"-->
-    <!--    />-->
-
-    <div
-      v-if="show"
-      class="shop-popup-cart"
-      :current-list-cart="listCart"
-      :class="{'shop-popup-cart_active':show}"
-      @click.self="show = !show"
-    >
-      <div class="shop-popup-cart__body">
-        <button
-          @click="show = !show"
-        >
-          close
-        </button>
-        <shop-position
-          v-for="position in checkList"
-          :key="position.id"
-          :position="position"
-          @delete-position="deletePosition"
-        />
-        <div class="shop-popup-cart__total">
-          total price: {{ totalPrice }}
-        </div>
-      </div>
-    </div>
-
     <div class="shop-header">
       <button
+        class="shop-header__cart"
         @click="show = !show"
       >
         cart <sup>{{ Object.keys(checkList).length }}</sup>
       </button>
     </div>
-    <main>
-      <shop-card
+    <div class="shop-list">
+      <shop-product
         v-for="product in products"
         :key="product.id"
         :product="product"
-        class="chop-card"
-        @add-product-in-cart="addProductToCart"
+        class="product"
+        @add-position-to-cart="addPositionToCart"
       />
-    </main>
+    </div>
+  </div>
+  <div
+    v-if="show"
+    class="shop-popup"
+    @click.self="show = !show"
+  >
+    <div class="shop-popup__body">
+      <button
+        @click="show = !show"
+      >
+        X
+      </button>
+      <shop-position
+        v-for="position in checkList"
+        :key="position.id"
+        :position="position"
+        @delete-position="deletePosition"
+      />
+      <div class="shop-popup__total">
+        total price: {{ totalPrice }}
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-
   import {
-    ref, onMounted, watch, computed,
+    ref, onMounted, computed,
   } from 'vue';
-  import ShopCard from './components/ShopCard.vue';
-  import ShopCartPopup from './components/ShopCartPopup.vue';
   import ShopPosition from './components/ShopPosition.vue';
+  import ShopProduct from './components/ShopProduct.vue';
+
 
 
 
   const products = ref([]);
   const show = ref(false);
   const checkList = ref({});
-  const listCart = ref([]);
 
-  const getProducts = async () => {
-    const response = await (await fetch('https://dummyjson.com/products')).json();
-    return response.products;
-  };
+  const getProducts = async () => (await (await fetch('https://dummyjson.com/products')).json()).products;
 
   onMounted(async () => {
     products.value = await getProducts();
@@ -78,7 +64,7 @@
 
   const totalPrice = computed(() => Object.keys(checkList.value).reduce((total, id) => total += checkList.value[id].count * checkList.value[id].price, 0));
 
-  const addProductToCart = (id) => {
+  const addPositionToCart = (id) => {
     const indexProduct = products.value.findIndex((product) => product.id === id);
     if (checkList.value[id]) {
       checkList.value[id].count++;
@@ -86,30 +72,9 @@
       checkList.value[id] = products.value[indexProduct];
       checkList.value[id].count = 1;
     }
-    console.log(checkList.value);
-    // if (checkList.value[id]) {
-    //   console.log(checkList.value[id], 'yes');
-    //   checkList.value[id] = {
-    //     ...products.value[indexProduct],
-    //     quantity: products.value[indexProduct].quantity + 1,
-    //     priceProducts: products.value[indexProduct].priceProducts + products.value[indexProduct].price,
-    //   };
-    // } else {
-    //   console.log(checkList.value[id], 'is not');
-    //   checkList.value[id] = {
-    //     ...products.value[indexProduct],
-    //     quantity: 1,
-    //     priceProducts: products.value[indexProduct].price,
-    //   };
-    // }
-    // console.log(checkList.value);
   };
 
-  const deletePosition = (id) => {
-    console.log(id, checkList.value);
-    delete checkList.value[id];
-    console.log(checkList.value);
-  };
+  const deletePosition = (id) => delete checkList.value[id];
 </script>
 
 <style lang="scss" scoped>
@@ -118,22 +83,67 @@
 
     .shop-header {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
       padding: 20px 0;
       margin: 10px;
 
-      &__shopping-cart {
-        grid-column: 2/-1;
+      &__cart {
+        grid-column: 2/3;
         justify-self: center;
         cursor: pointer;
+        width: 20%;
+        height: 40px;
+        border-radius: 5px;
+        border: 2px solid mediumpurple;
+        background-color: aliceblue;
+        font-weight: bold;
+        font-size: 20px;
       }
     }
 
-    main {
+    .shop-list {
+      max-width: 1360px;
+      margin: 0 auto;
       display: grid;
-      grid-template-columns: 15% 15% 15% 15% 15%;
-      justify-content: center;
-      grid-gap: 20px;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      grid-gap: 10px;
+    }
+  }
+  .shop-popup{
+    cursor: pointer;
+    min-width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    &__body{
+      cursor: auto;
+      border-radius: 8px;
+      background-color: aliceblue;
+      padding: 20px;
+      top: 20vh;
+      left: calc(50% - 20%);
+      position: absolute;
+      width: 40%;
+      height: 50%;
+      display: grid;
+      grid-template-rows: 30px 1fr;
+      gap: 10px;
+      overflow: scroll;
+      & button{
+        cursor: pointer;
+        justify-self: end;
+        font-size: 20px;
+        font-weight: bold;
+        background-color: aliceblue;
+        border: none;
+        outline: none;
+      }
+    }
+    &__total{
+      justify-self: center;
     }
   }
 </style>
