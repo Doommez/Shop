@@ -3,7 +3,7 @@
     <div class="shop-header">
       <button
         class="shop-header__cart"
-        @click="show = !show"
+        @click="showPopup"
       >
         cart <sup>{{ Object.keys(checkList).length }}</sup>
       </button>
@@ -21,11 +21,11 @@
   <div
     v-if="show"
     class="shop-popup"
-    @click.self="show = !show"
+    @click.self="showPopup"
   >
     <div class="shop-popup__body">
       <button
-        @click="show = !show"
+        @click="showPopup"
       >
         X
       </button>
@@ -49,11 +49,8 @@
   import ShopPosition from './components/ShopPosition.vue';
   import ShopProduct from './components/ShopProduct.vue';
 
-
-
-
   const products = ref([]);
-  const show = ref(false);
+  const show = ref(null);
   const checkList = ref({});
 
   const getProducts = async () => (await (await fetch('https://dummyjson.com/products')).json()).products;
@@ -74,13 +71,13 @@
     }
   };
 
+  const showPopup = () => show.value = !show.value;
+
   const deletePosition = (id) => delete checkList.value[id];
 </script>
 
 <style lang="scss" scoped>
   .shop {
-    min-height: 100vh;
-
     .shop-header {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -109,7 +106,8 @@
       grid-gap: 10px;
     }
   }
-  .shop-popup{
+
+  .shop-popup {
     cursor: pointer;
     min-width: 100vw;
     height: 100vh;
@@ -118,7 +116,8 @@
     top: 0;
     left: 0;
     overflow: hidden;
-    &__body{
+
+    &__body {
       cursor: auto;
       border-radius: 8px;
       background-color: aliceblue;
@@ -132,7 +131,8 @@
       grid-template-rows: 30px 1fr;
       gap: 10px;
       overflow: scroll;
-      & button{
+
+      & button {
         cursor: pointer;
         justify-self: end;
         font-size: 20px;
@@ -142,8 +142,11 @@
         outline: none;
       }
     }
-    &__total{
+
+    &__total {
       justify-self: center;
+      font-size: 20px;
+      font-weight: bold;
     }
   }
 </style>

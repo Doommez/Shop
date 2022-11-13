@@ -59,26 +59,32 @@
 </script>
 
 <style lang="scss" scoped>
-  .position{
+  .position {
     display: grid;
     grid-template-columns: 50% 1fr 1fr;
     grid-template-rows: 150px;
-    & img{
+
+    & img {
       height: 150px;
       max-width: 225px;
       box-shadow: -1px 3px 28px 5px rgba(34, 60, 80, 0.22);
     }
-    &__description{
+
+    &__description {
       align-self: center;
-      div:first-child{
+      justify-self: center;
+
+      div:first-child {
         font-weight: bold;
         font-size: 20px;
       }
     }
-    &__action{
+
+    &__action {
       display: grid;
       grid-template-rows: 1fr 1fr;
-      & button{
+
+      & button {
         justify-self: center;
         align-self: center;
         cursor: pointer;
