@@ -1,26 +1,29 @@
 <template>
-  <div class="shopping-cart">
-    <button @click="$emit('update:view', !view)">
-      X
-    </button>
-    <shop-position
-      v-for="position in listPositions"
-      :key="position.id"
-      :position="position"
-      @delete-position="deletePosition"
-    />
-    <div class="shopping-cart__total">
-      total price: {{ totalPrice }}
+  <div class="shop__popup">
+    <div class="shopping-cart">
+      <button @click="$emit('update:view', false)">
+        X
+      </button>
+      <shop-cart-position
+        v-for="position in checkList"
+        :key="position.product.id"
+        :position="position"
+        @delete-position="$emit('deletePosition', position.product.id)"
+      />
+      <div class="shopping-cart__total">
+        total price: {{ totalPrice }}
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-  import {computed, toRef} from 'vue';
-  import ShopPosition from './ShopPosition.vue';
+  import {computed} from 'vue';
+  import ShopCartPosition from './ShopCartPosition.vue';
 
   defineEmits([
     'update:view',
+    'deletePosition',
   ]);
 
   const props = defineProps({
@@ -34,20 +37,44 @@
     },
   });
 
-  const listPositions = toRef(props, 'checkList');
+  const totalPrice = computed(() => Object.keys(props.checkList).reduce((total, id) => total += props.checkList[id].count * props.checkList[id].product.price, 0));
 
-  const totalPrice = computed(() => Object.keys(listPositions.value).reduce((total, id) => total += listPositions.value[id].count * listPositions.value[id].price, 0));
-
-  const deletePosition = (id) => delete listPositions.value[id];
 </script>
 
 <style lang="scss" scoped>
+  .shop__popup {
+    cursor: pointer;
+    min-width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+  }
+
   .shopping-cart {
+    cursor: auto;
+    border-radius: 8px;
+    background-color: aliceblue;
+    padding: 20px;
+    top: 20vh;
+    left: calc(50% - 20%);
+    position: absolute;
+    width: 40%;
+    height: 50%;
+    overflow: scroll;
     display: grid;
     grid-template-rows: 30px 1fr;
     gap: 10px;
 
-    & button {
+    &__total {
+      justify-self: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    button {
       cursor: pointer;
       justify-self: end;
       font-size: 20px;
@@ -56,13 +83,5 @@
       border: none;
       outline: none;
     }
-
-    &__total {
-      justify-self: center;
-      font-size: 20px;
-      font-weight: bold;
-    }
   }
-
-
 </style>

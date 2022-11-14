@@ -13,20 +13,15 @@
         v-for="product in products"
         :key="product.id"
         :product="product"
-        class="product"
         @add-position-to-cart="addPositionToCart"
       />
     </div>
-    <div
+    <shop-cart
       v-if="isShown"
-      class="shop__popup"
-      @click.self="showPopup"
-    >
-      <shop-cart
-        v-model:view="isShown"
-        :check-list="checkList"
-      />
-    </div>
+      v-model:view="isShown"
+      :check-list="checkList"
+      @delete-position="deletePosition"
+    />
   </div>
 </template>
 
@@ -54,7 +49,7 @@
       checkList.value[id].count++;
     } else {
       checkList.value[id] = {
-        ...products.value[indexProduct],
+        product: products.value[indexProduct],
         count: 1,
       };
     }
@@ -62,31 +57,20 @@
 
   const showPopup = () => isShown.value = !isShown.value;
 
+  const deletePosition = (id) => delete checkList.value[id];
+
 </script>
 
 <style lang="scss" scoped>
   .shop {
-    .shop__header {
+    &__header {
       display: grid;
       grid-template-columns: 1fr 1fr;
       padding: 20px 0;
       margin: 10px;
-
-      .cart {
-        grid-column: 2/3;
-        justify-self: center;
-        cursor: pointer;
-        width: 20%;
-        height: 40px;
-        border-radius: 5px;
-        border: 2px solid mediumpurple;
-        background-color: aliceblue;
-        font-weight: bold;
-        font-size: 20px;
-      }
     }
 
-    .shop__list {
+    &__list {
       max-width: 1360px;
       margin: 0 auto;
       display: grid;
@@ -95,27 +79,17 @@
     }
   }
 
-  .shop__popup {
+  .cart {
+    grid-column: 2/3;
+    justify-self: center;
     cursor: pointer;
-    min-width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.8);
-    position: fixed;
-    top: 0;
-    left: 0;
-    overflow: hidden;
-
-    & div:first-child {
-      cursor: auto;
-      border-radius: 8px;
-      background-color: aliceblue;
-      padding: 20px;
-      top: 20vh;
-      left: calc(50% - 20%);
-      position: absolute;
-      width: 40%;
-      height: 50%;
-      overflow: scroll;
-    }
+    width: 20%;
+    height: 40px;
+    border-radius: 5px;
+    border: 2px solid mediumpurple;
+    background-color: aliceblue;
+    font-weight: bold;
+    font-size: 20px;
   }
+
 </style>

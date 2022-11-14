@@ -1,26 +1,24 @@
 <template>
   <div class="product">
     <img
-      :src="thumbnail"
-      :alt="title"
+      :src="product.thumbnail"
+      :alt="product.title"
     >
     <div>
-      {{ title }}
+      {{ props.product.title }}
     </div>
     <div>
-      {{ description }}
+      {{ product.description }}
     </div>
     <div>
-      {{ price }}$
+      {{ product.price }}$
     </div>
-    <button @click="buyProduct(id)">
+    <button @click="buyProduct(product.id)">
       buy
     </button>
   </div>
 </template>
 <script setup>
-
-  import {toRefs} from 'vue';
 
   const emit = defineEmits([
     'addPositionToCart',
@@ -32,10 +30,6 @@
       required: true,
     },
   });
-
-  const {
-    title, description, id, thumbnail, price,
-  } = toRefs(props.product);
 
   const buyProduct = (id) => {
     emit('addPositionToCart', id);
