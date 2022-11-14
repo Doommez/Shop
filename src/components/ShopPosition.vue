@@ -72,7 +72,6 @@
 
     &__description {
       align-self: center;
-      justify-self: center;
 
       div:first-child {
         font-weight: bold;
