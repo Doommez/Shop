@@ -36,10 +36,6 @@
 
   const listPositions = toRef(props, 'checkList');
 
-  const add = () => {
-    console.log(listPositions.value);
-  };
-
   const totalPrice = computed(() => Object.keys(listPositions.value).reduce((total, id) => total += listPositions.value[id].count * listPositions.value[id].price, 0));
 
   const deletePosition = (id) => delete listPositions.value[id];
