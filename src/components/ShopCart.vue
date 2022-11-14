@@ -26,7 +26,7 @@
   const props = defineProps({
     checkList: {
       type: Object,
-      default: {},
+      required: true,
     },
     view: {
       type: Boolean,
