@@ -4,9 +4,15 @@
       :src="thumbnail"
       :alt="title"
     >
-    <div>{{ title }}</div>
-    <div>{{ description }}</div>
-    <div>{{ price }}$</div>
+    <div>
+      {{ title }}
+    </div>
+    <div>
+      {{ description }}
+    </div>
+    <div>
+      {{ price }}$
+    </div>
     <button @click="buyProduct(id)">
       buy
     </button>

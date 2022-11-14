@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="position"
-  >
+  <div class="position">
     <img
       :src="thumbnail"
       :alt="title"
@@ -10,9 +8,15 @@
       <div>
         {{ title }}
       </div>
-      <div>quantity: {{ count }}</div>
-      <div>price: {{ price }}$</div>
-      <div>price for all: {{ pricePositions }}$</div>
+      <div>
+        quantity: {{ count }}
+      </div>
+      <div>
+        price: {{ price }}$
+      </div>
+      <div>
+        price for all: {{ pricePositions }}$
+      </div>
     </div>
     <div class="position__action">
       <button @click="changeQuantity(null)">
