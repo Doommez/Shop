@@ -20,6 +20,7 @@
       v-if="isShown"
       v-model:view="isShown"
       :check-list="checkList"
+      class="shop__popup"
       @delete-position="deletePosition"
     />
   </div>

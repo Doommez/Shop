@@ -18,11 +18,11 @@
         price for all: {{ totalPrice }}$
       </div>
     </div>
-    <div class="position__action">
-      <button @click="changeQuantity(null)">
+    <div class="position__action action">
+      <button @click="changeQuantity(1)">
         +
       </button>
-      <button @click="changeQuantity(position.product.id)">
+      <button @click="changeQuantity(-1)">
         -
       </button>
     </div>
@@ -49,14 +49,10 @@
 
   const totalPrice = computed(() => count.value * props.position.product.price);
 
-  const changeQuantity = (id) => {
-    if (id) {
-      count.value -= 1;
-      if (count.value === 0) {
-        emit('deletePosition', id);
-      }
-    } else {
-      count.value += 1;
+  const changeQuantity = (delta) => {
+    count.value += delta;
+    if (count.value === 0) {
+      emit('deletePosition', props.position.product.id);
     }
   };
 

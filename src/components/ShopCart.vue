@@ -1,5 +1,5 @@
 <template>
-  <div class="shop__popup">
+  <div>
     <div class="shopping-cart">
       <button @click="$emit('update:view', false)">
         X
@@ -37,7 +37,7 @@
     },
   });
 
-  const totalPriceForAll = computed(() => Object.keys(props.checkList).reduce((total, id) => total += props.checkList[id].count * props.checkList[id].product.price, 0));
+  const totalPriceForAll = computed(() => Object.keys(props.checkList).reduce((total, id) => total + props.checkList[id].count * props.checkList[id].product.price, 0));
 
 
 </script>
