@@ -55,7 +55,7 @@
     }
   };
 
-  const showPopup = () => isShown.value = !isShown.value;
+  const showPopup = () => isShown.value = true;
 
   const deletePosition = (id) => delete checkList.value[id];
 

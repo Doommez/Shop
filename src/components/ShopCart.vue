@@ -11,7 +11,7 @@
         @delete-position="$emit('deletePosition', position.product.id)"
       />
       <div class="shopping-cart__total">
-        total price: {{ totalPrice }}
+        total price: {{ totalPriceForAll }}
       </div>
     </div>
   </div>
@@ -37,7 +37,8 @@
     },
   });
 
-  const totalPrice = computed(() => Object.keys(props.checkList).reduce((total, id) => total += props.checkList[id].count * props.checkList[id].product.price, 0));
+  const totalPriceForAll = computed(() => Object.keys(props.checkList).reduce((total, id) => total += props.checkList[id].count * props.checkList[id].product.price, 0));
+
 
 </script>
 

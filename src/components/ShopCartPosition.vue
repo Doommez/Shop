@@ -31,7 +31,7 @@
 
 <script setup>
   import {
-    computed, toRefs,
+    computed, toRef,
   } from 'vue';
 
   const emit = defineEmits([
@@ -45,7 +45,7 @@
     },
   });
 
-  const {count} = toRefs(props.position);
+  const count = toRef(props.position, 'count');
 
   const totalPrice = computed(() => count.value * props.position.product.price);
 
@@ -67,12 +67,6 @@
     display: grid;
     grid-template-columns: 50% 1fr 1fr;
     grid-template-rows: 150px;
-
-    img {
-      height: 150px;
-      max-width: 225px;
-      box-shadow: -1px 3px 28px 5px rgba(34, 60, 80, 0.22);
-    }
 
     &__description {
       align-self: center;
@@ -97,6 +91,12 @@
         border-radius: 5px;
         border: 1px solid mediumpurple;
       }
+    }
+
+    img {
+      height: 150px;
+      max-width: 225px;
+      box-shadow: -1px 3px 28px 5px rgba(34, 60, 80, 0.22);
     }
   }
 </style>
